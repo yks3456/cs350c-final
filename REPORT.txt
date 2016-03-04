@@ -1,0 +1,28 @@
+Describe your implementation:
+I took the instruction set from P7 and added two more instructions.
+Here is the instruction set:
+0000iiiiiiiitttt mov i,t regs[t] = i; pc += 1;
+0001aaaabbbbtttt add a,b,t regs[t] = regs[a] + regs[b]; pc += 1;
+0010jjjjjjjjjjjj jmp j pc = j;
+0011000000000000 halt <stop fetching instructions>
+0100iiiiiiiitttt ld i,t regs[t] = mem[i]; pc += 1;
+0101aaaabbbbtttt ldr a,b,t regs[t] = mem[regs[a]+regs[b]]; pc += 1;
+0110aaaabbbbtttt jeq a,b,t if (regs[a] == regs[b]) pc += d
+else pc += 1;
+0111aaaakkkkkkkk st a,k mem[k] = regs[a]; pc += 1;
+1000iiiiiiiitttt test_and_set i,t if(mem[i]) regs[t] = 1; else mem[i] = 1; regs[t] = 0; // atomic operation
+
+My dual-core implementation also include a cache coherence policy similar to MSI except memory is always written directly to the memory instead of into the cache.
+
+To compile, use "make".
+To run the test case that I have provided, use "make test".
+"mem.hex" contains the program that I wrote as the test case.
+
+What worked?
+Each core is able to execute different instructions at the same time. Whenever a write occurs to memory, the other core clears the cache entry for the memory address that the write occurred if it exists.
+
+What didn't work?
+This implementation isn't perfect because the memory write takes only one cycle. If this takes multiple cycles, the way that the atomic operation executes currently may have to be changed.
+
+What did you learn?
+I learned about cache coherence, specifically MSI. I have learned that designing multiple cores of processors that can run separate threads of instructions can be much more complicated than implementing a single core design.

@@ -1,0 +1,1 @@
+- implement a dual-core variant of our processor with private data caches and shared memory
